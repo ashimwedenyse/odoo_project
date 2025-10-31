@@ -1,0 +1,8 @@
+<odoo>
+    <menuitem id="menu_estate_root" name="Real Estate"/>
+
+    <menuitem id="menu_estate_properties" name="Properties" parent="menu_estate_root"/>
+
+    <!-- Action must exist, replace 'action_estate_properties' with your actual window action ID -->
+    <menuitem id="menu_estate_third" name="Third" parent="menu_estate_properties" action="action_estate_properties"/>
+</odoo>
