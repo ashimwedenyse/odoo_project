@@ -1,8 +1,16 @@
-from odoo import  fields, models
+from odoo import  api,fields, models
 
 
 class PropertyType(models.Model):
     _name="estate.property.type"
-    _description="test"
-    name = fields.Char(string="Name" ,required=True)
+    _description="type of real estate property"
+    _inherit ="estate.mixin"
+
+
+
+
+
+
+
+
 
