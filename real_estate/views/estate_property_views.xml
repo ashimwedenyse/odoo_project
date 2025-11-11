@@ -20,6 +20,26 @@
             </field>
         </record>
 
+        <!-- Simple List View (for Advertisements menu - without state and offers) -->
+        <record id="estate_property_simple_list_view" model="ir.ui.view">
+            <field name="name">estate.property.view.simple.list</field>
+            <field name="model">estate.property</field>
+            <field name="arch" type="xml">
+               <list create="true">
+                   <field name="name"/>
+                   <field name="property_type_id"/>
+                   <field name="tag_ids" widget="many2many_tags"/>
+                   <field name="currency_id" column_invisible="1"/>
+                   <field name="expected_price" widget="monetary"/>
+                   <field name="bedrooms"/>
+                   <field name="living_area"/>
+                   <field name="facades"/>
+                   <field name="garage"/>
+                   <field name="garden"/>
+               </list>
+            </field>
+        </record>
+
         <!-- Form View -->
         <record id="estate_property_form_view" model="ir.ui.view">
             <field name="name">estate.property.view.form</field>
@@ -194,6 +214,97 @@
             </field>
         </record>
 
+ <record id="view_estate_property_type_form" model="ir.ui.view">
+    <field name="name">estate.property.type.form</field>
+    <field name="model">estate.property.type</field>
+    <field name="arch" type="xml">
+        <form string="Property Type">
+            <sheet>
+                <!-- Name field -->
+                <group>
+                    <field name="name"/>
+                </group>
+
+                <notebook>
+                    <!-- General Information -->
+                    <page string="General Information">
+                        <group>
+                            <field name="property_model"/> <!-- renamed from 'model' -->
+                            <field name="category"/>
+                            <field name="description"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="color"/>
+
+                        </group>
+                    </page>
+
+                    <!-- House / Land Details -->
+                    <page string="House / Land Details">
+                        <group>
+                            <field name="area"/>
+                            <field name="number_of_rooms"/>
+                            <field name="number_of_bathrooms"/>
+                            <field name="number_of_floors"/>
+                            <field name="garden"/>
+                            <field name="garage"/>
+                            <field name="year_built"/>
+                            <field name="location"/>
+                        </group>
+                    </page>
+
+                    <!-- Vehicle Details -->
+                    <page string="Vehicle Details">
+                        <group>
+                            <field name="make"/>
+                            <field name="vehicle_model"/> <!-- renamed from 'model' -->
+                            <field name="year"/>
+                            <field name="engine_type"/>
+                            <field name="transmission"/>
+                            <field name="car_color"/>
+                            <field name="mileage"/>
+                            <field name="seats"/>
+                            <field name="fuel_capacity"/>
+                        </group>
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- LIST VIEW -->
+<record id="view_estate_property_type_list" model="ir.ui.view">
+    <field name="name">estate.property.type.list</field>
+    <field name="model">estate.property.type</field>
+    <field name="arch" type="xml">
+        <list string="Property Types" decoration-muted="not active">
+            <field name="name"/>
+            <field name="property_model"/>
+            <field name="category"/>
+            <field name="active"/>
+        </list>
+    </field>
+</record>
+
+    <!-- Action for Property Type -->
+    <record id="estate_property_type_action" model="ir.actions.act_window">
+        <field name="name">Property Types</field>
+        <field name="res_model">estate.property.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+        <!-- ACTIONS -->
+        <!-- Action for Properties (Simple view without state/offers) -->
+        <record id="estate_property_simple_action" model="ir.actions.act_window">
+            <field name="name">Properties</field>
+            <field name="res_model">estate.property</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="estate_property_simple_list_view"/>
+            <field name="domain">[('state', '=', 'new')]</field>
+        </record>
+
         <!-- Action -->
         <record id="estate_property_action" model="ir.actions.act_window">
             <field name="name">Properties</field>
@@ -202,19 +313,26 @@
             <field name="context">{'search_default_available': True}</field>
         </record>
 
-         <!-- MENUS -->
+        <!-- MENUS -->
         <!-- Root Menu -->
-       <record id="estate_menu_root" model="ir.ui.menu">
+        <record id="estate_menu_root" model="ir.ui.menu">
             <field name="name">Real Estate</field>
             <field name="sequence" eval="10"/>
         </record>
 
-        <!-- Properties Menu (Advertisements) -->
-        <record id="estate_property_menu" model="ir.ui.menu">
+        <!-- Advertisements Menu (Parent - No Action) -->
+        <record id="estate_advertisements_menu" model="ir.ui.menu">
             <field name="name">Advertisements</field>
             <field name="parent_id" ref="estate_menu_root"/>
-            <field name="action" ref="estate_property_action"/>
             <field name="sequence" eval="10"/>
+        </record>
+
+        <!-- Submenu: Properties -->
+        <record id="estate_property_menu" model="ir.ui.menu">
+            <field name="name">Properties</field>
+            <field name="parent_id" ref="estate_advertisements_menu"/>
+            <field name="action" ref="estate_property_action"/>
+            <field name="sequence" eval="1"/>
         </record>
 
         <!-- Settings Menu -->
