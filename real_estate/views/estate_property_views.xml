@@ -66,6 +66,10 @@
                                 <field name="expected_price" widget="monetary"/>
                                 <field name="best_offer" widget="monetary"/>
                                 <field name="selling_price" widget="monetary"/>
+                                <field name="price_difference"
+                                       widget="monetary"
+                                       decoration-success="price_difference &gt; 0"
+                                       decoration-danger="price_difference &lt; 0"/>
                             </group>
                         </group>
 
@@ -97,7 +101,8 @@
                                     <list decoration-success="status == 'accepted'"
                                           decoration-danger="status == 'refused'">
                                         <field name="price"/>
-                                        <field name="partner_id"/>
+                                        <!-- UPDATED: Show multiple customers as tags -->
+                                        <field name="partner_ids" widget="many2many_tags"/>
                                         <field name="validity"/>
                                         <field name="date_deadline"/>
                                         <field name="status" readonly="1"/>
@@ -150,10 +155,10 @@
                       decoration-success="status == 'accepted'"
                       decoration-danger="status == 'refused'">
                     <field name="price"/>
-                    <field name="partner_id"/>
+                    <!-- UPDATED: Show multiple customers as tags -->
+                    <field name="partner_ids" widget="many2many_tags"/>
                     <field name="validity"/>
                     <field name="date_deadline"/>
-                    <field name="status"/>
                     <button name="action_accept"
                             string="Accept"
                             type="object"
@@ -175,7 +180,11 @@
                     <sheet>
                         <group>
                             <field name="price"/>
-                            <field name="partner_id"/>
+                            <!-- UPDATED: Many2many field for multiple customers -->
+                            <field name="partner_ids"
+                                   widget="many2many_tags"
+                                   placeholder="Select customers..."
+                                   options="{'color_field': 'color', 'no_create': False}"/>
                             <field name="validity"/>
                             <field name="date_deadline"/>
                             <field name="status"/>
@@ -195,7 +204,7 @@
 
          <!-- MENUS -->
         <!-- Root Menu -->
-        <record id="estate_menu_root" model="ir.ui.menu">
+       <record id="estate_menu_root" model="ir.ui.menu">
             <field name="name">Real Estate</field>
             <field name="sequence" eval="10"/>
         </record>
@@ -219,12 +228,14 @@
         <record id="estate_property_types_menu" model="ir.ui.menu">
             <field name="name">Property Types</field>
             <field name="parent_id" ref="estate_settings_menu"/>
+            <field name="action" ref="estate_property_type_action"/>
             <field name="sequence" eval="1"/>
         </record>
 
         <record id="estate_property_tags_menu" model="ir.ui.menu">
             <field name="name">Property Tags</field>
             <field name="parent_id" ref="estate_settings_menu"/>
+            <field name="action" ref="estate_property_tags_action"/>
             <field name="sequence" eval="2"/>
         </record>
 

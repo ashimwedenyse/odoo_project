@@ -33,6 +33,12 @@ class EstateProperty(models.Model):
                                   )
     expected_price = fields.Monetary(required=True, currency_field='currency_id')
     selling_price = fields.Monetary(copy=False, readonly=True, currency_field='currency_id')
+    price_difference = fields.Monetary(
+        string="Price Difference",
+        compute="_compute_price_difference",
+        currency_field='currency_id',
+        help="Difference between selling price and expected price"
+    )
 
     description = fields.Text()
     bedrooms = fields.Integer(default=2)
@@ -91,6 +97,11 @@ class EstateProperty(models.Model):
     def _compute_offer_count(self):
         for record in self:
             record.offer_count = len(record.offer_ids)
+
+    @api.depends("expected_price", "selling_price")
+    def _compute_price_difference(self):
+        for record in self:
+            record.price_difference = record.selling_price - record.expected_price
 
     # ------------------------
     #   ONCHANGE & CONSTRAINTS

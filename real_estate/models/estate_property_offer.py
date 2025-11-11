@@ -18,10 +18,12 @@ class EstateOffer(models.Model):
         copy=False,
     )
 
-    partner_id = fields.Many2one(
+    # CHANGED: Many2one to Many2many for multiple customers
+    partner_ids = fields.Many2many(
         "res.partner",
-        string="Customer",
-        required=True
+        string="Customers",
+        required=True,
+        help="Select one or more customers to send this offer to"
     )
 
     property_id = fields.Many2one(
@@ -62,7 +64,7 @@ class EstateOffer(models.Model):
     def create(self, vals):
         offer = super().create(vals)
         if offer.property_id and offer.property_id.state == 'new':
-            offer.property_id.state = 'offer_received'  # FIXED: Changed from 'received' to 'offer_received'
+            offer.property_id.state = 'offer_received'
         return offer
 
     def write(self, vals):
@@ -78,7 +80,6 @@ class EstateOffer(models.Model):
                         'best_offer': offer.price,
                     })
                 elif offer.status == 'refused':
-                    # FIXED: Corrected typo 'acceptedd' to 'accepted'
                     accepted_offers = offer.property_id.offer_ids.filtered(lambda o: o.status == 'accepted')
                     if not accepted_offers:
                         offer.property_id.write({
