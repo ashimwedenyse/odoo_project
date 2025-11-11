@@ -4,7 +4,7 @@
     "version": "19.0.1.0.0",
     "author": "Your Name or Company",
     "license": "LGPL-3",
-    "depends": ["crm"],
+    "depends": ["crm", "web"],
     "data": [
         "security/res_groups.xml",
         "security/ir.model.access.csv",
@@ -15,6 +15,15 @@
     "demo": [
         "demo/demo.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "real_estate/static/src/css/style.css",
+            "real_estate/static/src/js/script.js",
+        ],
+        "web.assets_qweb": [
+            "real_estate/static/src/xml/templates.xml",
+        ],
+    },
     "installable": True,
     "application": True,
 }
