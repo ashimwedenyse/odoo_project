@@ -10,6 +10,7 @@ class EstateProperty(models.Model):
     # Basic fields
     active = fields.Boolean(default=True)
     name = fields.Char(required=True)
+    image = fields.Binary(string="Property Image", attachment=True)
 
     state = fields.Selection(
         [
@@ -157,3 +158,5 @@ class EstateProperty(models.Model):
             "domain": [("property_id", "=", self.id)],
             "context": {"default_property_id": self.id},
         }
+
+

@@ -1,106 +1,152 @@
-// Real Estate Module JavaScript
-
-$(document).ready(function() {
+// Real Estate Module JavaScript - Vanilla JS Version
+document.addEventListener('DOMContentLoaded', function() {
     console.log('Real Estate module loaded');
 
-    // Smooth scrolling for anchor links
-    $('a[href^="#"]').on('click', function(event) {
-        var target = $(this.getAttribute('href'));
-        if (target.length) {
-            event.preventDefault();
-            $('html, body').stop().animate({
-                scrollTop: target.offset().top - 70
-            }, 1000);
-        }
-    });
-
     // Toggle property details with smooth animation
-    $('.property-card').on('click', '.toggle-details', function(e) {
-        e.preventDefault();
-        var $details = $(this).siblings('.details');
-        var $button = $(this);
-        $details.slideToggle(300, function() {
-            $button.text($details.is(':visible') ? 'Hide Details' : 'View Details');
-        });
-    });
-
-    // Enhanced search functionality with highlighting
-    $('#property-search').on('input', function() {
-        var searchTerm = $(this).val().toLowerCase();
-        $('.property-item').each(function() {
-            var $card = $(this);
-            var text = $card.text().toLowerCase();
-            if (text.includes(searchTerm) || searchTerm === '') {
-                $card.fadeIn(200);
-            } else {
-                $card.fadeOut(200);
+    document.querySelectorAll('.toggle-details').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const details = this.parentElement.querySelector('.details');
+            if (details) {
+                if (details.style.display === 'none' || details.style.display === '') {
+                    details.style.display = 'block';
+                    this.textContent = 'Hide Details';
+                } else {
+                    details.style.display = 'none';
+                    this.textContent = 'View Details';
+                }
             }
         });
     });
 
-    // Image gallery navigation (placeholder functionality)
-    $('.card-img-top').on('click', '.btn', function(e) {
-        e.preventDefault();
-        // Placeholder for image gallery navigation
-        console.log('Image navigation clicked');
-    });
+    // Enhanced search functionality
+    const searchInput = document.getElementById('property-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.property-item').forEach(function(item) {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm) || searchTerm === '') {
+                    item.style.display = '';
+                    item.style.opacity = '1';
+                } else {
+                    item.style.opacity = '0';
+                    setTimeout(function() {
+                        if (item.style.opacity === '0') {
+                            item.style.display = 'none';
+                        }
+                    }, 200);
+                }
+            });
+        });
+    }
 
     // Contact agent button
-    $('.btn-success').on('click', function(e) {
-        e.preventDefault();
-        alert('Contact form would open here. Phone: +1-234-567-8900');
-    });
-
-    // Schedule viewing button
-    $('.btn-outline-primary').on('click', function(e) {
-        e.preventDefault();
-        alert('Calendar booking would open here.');
-    });
-
-    // Share property button
-    $('.btn-outline-secondary').on('click', function(e) {
-        e.preventDefault();
-        if (navigator.share) {
-            navigator.share({
-                title: 'Check out this property',
-                text: 'I found this amazing property!',
-                url: window.location.href
-            });
-        } else {
-            // Fallback for browsers that don't support Web Share API
-            var url = window.location.href;
-            navigator.clipboard.writeText(url).then(function() {
-                alert('Property link copied to clipboard!');
+    document.querySelectorAll('.btn-success').forEach(function(btn) {
+        if (btn.textContent.includes('Contact Agent')) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Contact form would open here. Phone: +1-234-567-8900');
             });
         }
     });
 
-    // Add loading animation for cards
-    $('.property-item').hide().fadeIn(500);
+    // Schedule viewing button
+    document.querySelectorAll('.btn-outline-primary').forEach(function(btn) {
+        if (btn.textContent.includes('Schedule Viewing')) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Calendar booking would open here.');
+            });
+        }
+    });
 
-    // Stats counter animation
-    $('.display-4').each(function() {
-        var $this = $(this);
-        var countTo = parseInt($this.text());
-        if (!isNaN(countTo)) {
-            $({ countNum: 0 }).animate({
-                countNum: countTo
-            }, {
-                duration: 2000,
-                easing: 'swing',
-                step: function() {
-                    $this.text(Math.floor(this.countNum));
-                },
-                complete: function() {
-                    $this.text(this.countNum);
+    // Share property button
+    document.querySelectorAll('.btn-outline-secondary').forEach(function(btn) {
+        if (btn.textContent.includes('Share Property')) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Check out this property',
+                        text: 'I found this amazing property!',
+                        url: window.location.href
+                    }).catch(function(err) {
+                        console.log('Share failed:', err);
+                    });
+                } else {
+                    // Fallback for browsers that don't support Web Share API
+                    const url = window.location.href;
+                    navigator.clipboard.writeText(url).then(function() {
+                        alert('Property link copied to clipboard!');
+                    }).catch(function() {
+                        alert('Could not copy link. URL: ' + url);
+                    });
                 }
             });
         }
     });
 
-    // Hero section parallax effect (subtle)
-    $(window).scroll(function() {
-        var scrollTop = $(this).scrollTop();
-        $('.hero-section').css('background-position', 'center ' + (scrollTop * 0.5) + 'px');
+    // Fade in property items
+    document.querySelectorAll('.property-item').forEach(function(item, index) {
+        item.style.opacity = '0';
+        setTimeout(function() {
+            item.style.transition = 'opacity 0.5s';
+            item.style.opacity = '1';
+        }, index * 100);
+    });
+
+    // Stats counter animation
+    document.querySelectorAll('.stats-section .display-4').forEach(function(element) {
+        const text = element.textContent.trim();
+        const countTo = parseInt(text);
+
+        if (!isNaN(countTo)) {
+            let current = 0;
+            const increment = countTo / 50;
+            const timer = setInterval(function() {
+                current += increment;
+                if (current >= countTo) {
+                    element.textContent = countTo;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 40);
+        }
+    });
+
+    // Simple parallax effect for hero section
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                const scrollTop = window.pageYOffset;
+                const heroSection = document.querySelector('.hero-section');
+                if (heroSection) {
+                    heroSection.style.backgroundPosition = 'center ' + (scrollTop * 0.5) + 'px';
+                }
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId !== '#') {
+                const target = document.querySelector(targetId);
+                if (target) {
+                    e.preventDefault();
+                    const offsetTop = target.offsetTop - 70;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
     });
 });

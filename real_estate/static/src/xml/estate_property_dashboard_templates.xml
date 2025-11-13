@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="estate_property_dashboard_template">
+        <div class="o_estate_dashboard">
+            <!-- Header -->
+            <div class="o_estate_header bg-primary text-white p-3 mb-4 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="fa fa-home fa-2x me-2"/>
+                    <h3 class="mb-0">Real Estate Dashboard</h3>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <t t-if="state.loading">
+                <div class="text-center p-5">
+                    <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
+                    <p class="mt-3">Loading dashboard data...</p>
+                </div>
+            </t>
+
+            <!-- Dashboard Content -->
+            <t t-if="!state.loading">
+                <div class="container-fluid">
+                    <!-- Stats Row -->
+                    <div class="row mb-4">
+                        <!-- Total Properties Card -->
+                        <div class="col-md-3">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-2">Total Properties</h6>
+                                    <h2 class="mb-0 fw-bold"><t t-esc="state.totalProperties"/></h2>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sold Properties Card -->
+                        <div class="col-md-3">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-2">Sold</h6>
+                                    <h2 class="mb-0 fw-bold"><t t-esc="state.soldProperties"/></h2>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Property Types Pie Chart -->
+                        <div class="col-md-3">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-2">Properties by Type</h6>
+                                    <div class="d-flex align-items-center">
+                                        <svg width="100" height="100" viewBox="0 0 100 100" class="me-3" style="transform: rotate(-90deg);">
+                                            <t t-set="total" t-value="state.propertyTypes.reduce((sum, p) => sum + p.count, 0)"/>
+                                            <t t-foreach="state.propertyTypes" t-as="propType" t-key="propType_index">
+                                                <path t-att-d="getPieChartPath(propType, propType_index, total)"
+                                                      t-att-fill="propType.color"/>
+                                            </t>
+                                        </svg>
+                                        <div>
+                                            <t t-foreach="state.propertyTypes" t-as="propType" t-key="propType.type">
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <span class="rounded-circle d-inline-block me-2"
+                                                          t-att-style="'width: 12px; height: 12px; background-color: ' + propType.color"/>
+                                                    <small><t t-esc="propType.type"/></small>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Property Status Histogram -->
+                        <div class="col-md-3">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-3">Property Status</h6>
+                                    <div class="histogram-container">
+                                        <t t-foreach="state.propertyStatus" t-as="status" t-key="status.status">
+                                            <div class="histogram-bar mb-2">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <small class="text-muted"><t t-esc="status.status"/></small>
+                                                    <small class="fw-bold"><t t-esc="status.count"/></small>
+                                                </div>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-primary"
+                                                         t-att-style="'width: ' + getBarHeight(status) + '%'"
+                                                         role="progressbar"
+                                                         t-att-aria-valuenow="status.count"
+                                                         t-att-aria-valuemin="0"
+                                                         t-att-aria-valuemax="Math.max(...state.propertyStatus.map(s => s.count))"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Properties List -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Recent Properties</h5>
+                            <button class="btn btn-primary btn-sm" t-on-click="createProperty">
+                                <i class="fa fa-plus me-1"/>Create
+                            </button>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <t t-foreach="paginatedProperties" t-as="property" t-key="property.id">
+                                    <div class="list-group-item px-3 py-3" style="cursor: pointer;" t-on-click="() => this.openPropertyForm(property.id)">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <img t-att-src="property.image"
+                                                     class="rounded"
+                                                     alt="Property"
+                                                     style="width: 60px; height: 60px; object-fit: cover;"
+                                                     t-on-error="this.handleImageError"/>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h6 class="mb-1 fw-bold"><t t-esc="property.name"/></h6>
+                                                        <p class="mb-1 text-primary fw-bold">
+                                                            $<t t-esc="property.price.toLocaleString()"/>
+                                                        </p>
+                                                        <small class="text-muted">
+                                                            <t t-esc="property.stateLabel"/>
+                                                        </small>
+                                                    </div>
+                                                    <span t-attf-class="badge {{getStatusBadgeClass(property.state)}}">
+                                                        <t t-esc="property.stateLabel"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Pagination -->
+                            <t t-if="totalPages > 1">
+                                <div class="card-footer bg-light">
+                                    <nav aria-label="Properties pagination">
+                                        <ul class="pagination pagination-sm justify-content-center mb-0">
+                                            <li class="page-item" t-att-class="state.currentPage === 1 ? 'disabled' : ''">
+                                                <a class="page-link" href="#" t-on-click="prevPage">
+                                                    <i class="fa fa-chevron-left"/>
+                                                </a>
+                                            </li>
+                                            <t t-foreach="Array.from({length: totalPages}, (_, i) => i + 1)" t-as="page" t-key="page">
+                                                <li class="page-item" t-att-class="page === state.currentPage ? 'active' : ''">
+                                                    <a class="page-link" href="#" t-on-click="() => this.goToPage(page)">
+                                                        <t t-esc="page"/>
+                                                    </a>
+                                                </li>
+                                            </t>
+                                            <li class="page-item" t-att-class="state.currentPage === totalPages ? 'disabled' : ''">
+                                                <a class="page-link" href="#" t-on-click="nextPage">
+                                                    <i class="fa fa-chevron-right"/>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <t t-if="state.recentProperties.length === 0">
+                        <div class="text-center p-5">
+                            <i class="fa fa-home fa-5x text-muted mb-3"/>
+                            <h4>No Properties Found</h4>
+                            <p class="text-muted">Start by creating your first property</p>
+                            <button class="btn btn-primary" t-on-click="createProperty">
+                                <i class="fa fa-plus me-2"/>Create Property
+                            </button>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

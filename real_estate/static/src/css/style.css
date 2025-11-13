@@ -1,98 +1,47 @@
-/* Real Estate Module Styles */
-
-.hero-section {
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-    min-height: 400px;
-    display: flex;
-    align-items: center;
+.o_estate_dashboard {
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
 }
 
-.features-section .card {
-    border: none;
-    transition: transform 0.3s ease;
-}
-
-.features-section .card:hover {
-    transform: translateY(-10px);
-}
-
-.properties-section .property-card {
-    transition: all 0.3s ease;
-    border: 1px solid #e9ecef;
-}
-
-.properties-section .property-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-
-.stats-section {
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-}
-
-.property-header {
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-}
-
-.property-list {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.property-item {
-    display: flex;
+.o_estate_header {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .card {
+    border: none;
+    border-radius: 8px;
     transition: transform 0.2s;
 }
 
-.toggle-details {
-    transition: all 0.2s;
-}
-
-.toggle-details:hover {
-    background-color: #007bff !important;
-    color: white !important;
-}
-
-.details {
-    animation: fadeIn 0.5s;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.badge {
-    font-size: 0.8em;
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
 }
 
 .card-img-top {
-    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0;
 }
 
-.calendar-placeholder {
-    border: 2px dashed #dee2e6;
-    border-radius: 8px;
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
 }
 
-.media {
-    margin-bottom: 1rem;
+.histogram-container {
+    max-height: 200px;
+    overflow-y: auto;
 }
 
-.list-group-item {
-    border: none;
-    padding: 0.75rem 0;
+.histogram-bar {
+    margin-bottom: 8px;
 }
 
-.btn-block {
-    margin-bottom: 0.5rem;
+.histogram-bar .progress {
+    margin-bottom: 4px;
 }
 
-.display-4 {
-    font-size: 2.5rem;
-    font-weight: 300;
-    line-height: 1.2;
+.list-group-item:hover {
+    background-color: #f8f9fa;
 }

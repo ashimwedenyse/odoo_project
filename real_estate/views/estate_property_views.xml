@@ -92,6 +92,10 @@
                                        decoration-danger="price_difference &lt; 0"/>
                             </group>
                         </group>
+                        <group>
+                            <field name="image" widget="image" class="oe_avatar" options="{'preview_image': 'image'}"/>
+                        </group>
+
 
                         <group>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
@@ -355,6 +359,15 @@
             <field name="parent_id" ref="estate_settings_menu"/>
             <field name="action" ref="estate_property_tags_action"/>
             <field name="sequence" eval="2"/>
+        </record>
+
+
+<!-- Dashboard Menu -->
+        <record id="estate_property_dashboard_menu" model="ir.ui.menu">
+            <field name="name">Dashboard</field>
+            <field name="parent_id" ref="estate_menu_root"/> <!-- under Real Estate root -->
+            <field name="action" ref="estate_property_dashboard_action"/>
+            <field name="sequence" eval="5"/>
         </record>
 
     </data>
